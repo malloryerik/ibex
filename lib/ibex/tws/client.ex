@@ -1,13 +1,35 @@
 defmodule Ibex.Tws.Client do
+  @moduledoc """
+  Handles the TCP connection to the Interactive Brokers Trader Workstation (TWS) API.
+
+  This module encapsulates the functionality to connect to the TWS API, manage the TCP connection,
+  and process incoming and outgoing messages. It supports connecting to both paper trading and live
+  environments by switching the port number.
+
+  ## Example
+
+      {:ok, pid} = Ibex.Tws.Client.start_link(host: "127.0.0.1", port: 7497)
+      # Now the client is ready to send and receive messages with the TWS API.
+  """
+
   use GenServer
   require Logger
 
   # IP address in tuple format for localhost
   @ip {127, 0, 0, 1}
   # Default port for TWS API paper trading; live is 7496
-  @port 7497
+  # add `@live_port 7496` and way to **clearly and obviously** switch between paper and live.
+  @paper_port 7497
 
-  # Public API to start the GenServer
+  @doc """
+  Starts the GenServer responsible for handling the connection to TWS API.
+
+  ## Parameters
+  - `opts`: Options for starting the GenServer. Can include the host and port.
+
+  ## Returns
+  - PID of the started GenServer on success
+  """
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -21,9 +43,9 @@ defmodule Ibex.Tws.Client do
   end
 
   def handle_info(:connect, state) do
-    Logger.info("Connecting to TWS API at #{:inet.ntoa(@ip)}:#{@port}")
+    Logger.info("Connecting to TWS API at #{:inet.ntoa(@ip)}:#{@paper_port}")
 
-    case :gen_tcp.connect(@ip, @port, [:binary, packet: :raw, active: false]) do
+    case :gen_tcp.connect(@ip, @paper_port, [:binary, packet: :raw, active: false]) do
       {:ok, socket} ->
         Logger.info("Successfully connected to TWS API.")
         {:noreply, Map.put(state, :socket, socket)}
