@@ -1,5 +1,6 @@
 defmodule Ibex.Tws.Client do
   use GenServer
+  require Logger
 
   @paper_port 7497
   # @live_port 7496
@@ -19,23 +20,33 @@ defmodule Ibex.Tws.Client do
 
   # Callbacks
 
-  # port 7497 is papertrading.
   @impl true
   def init(opts) do
-    host = opts[:host] || "127.0.0.1"
-    port = opts[:port] || @paper_port
-    :ok = connect(host, port)
-    {:ok, %{socket: nil}}
+    state = %{host: opts[:host] || "127.0.0.1", port: opts[:port] || @paper_port, socket: nil}
+    {:ok, state, {:continue, :connect}}
   end
 
-  # Connect to TWS with :gen_tcp -- https://www.erlang.org/doc/man/gen_tcp.html ; https://hexdocs.pm/elixir/task-and-gen-tcp.html
-  defp connect(host, port) do
-    case :gen_tcp.connect(host, port, [:binary, packet: :line, active: false]) do
+  # # Connect to TWS with :gen_tcp -- https://www.erlang.org/doc/man/gen_tcp.html ; https://hexdocs.pm/elixir/task-and-gen-tcp.html
+  # defp connect(host, port) do
+  #   case :gen_tcp.connect(host, port, [:binary, packet: :line, active: false]) do
+  #     {:ok, socket} ->
+  #       GenServer.cast(__MODULE__, {:connected, socket})
+
+  #     {:error, _} = error ->
+  #       GenServer.cast(__MODULE__, {:connect_error, error})
+  #   end
+  # end
+
+  @impl true
+  def handle_continue(:connect, state) do
+    case :gen_tcp.connect(state.host, state.port, [:binary, packet: :raw, active: false]) do
       {:ok, socket} ->
-        GenServer.cast(__MODULE__, {:connected, socket})
+        Logger.info("Successfully connected to TWS API.")
+        {:noreply, Map.put(state, :socket, socket)}
 
       {:error, _} = error ->
-        GenServer.cast(__MODULE__, {:connect_error, error})
+        Logger.error("TCP Connection Error: #{inspect(error)}")
+        {:stop, :connect_error, state}
     end
   end
 

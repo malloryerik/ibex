@@ -5,6 +5,7 @@ defmodule Ibex.Application do
 
   @paper_port 7497
   # @live_port 7496
+  # TODO Connected with TODO on lib/ibex/tws/client.ex, enable easy and **clear, obvious** switching between paper and live accounts.
 
   use Application
 
@@ -12,7 +13,7 @@ defmodule Ibex.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: Ibex.Worker.start_link(arg)
-      {Ibex.TwsClient, [host: "127.0.0.1", port: @paper_port]}
+      {Ibex.Tws.Client, [host: "127.0.0.1", port: @paper_port]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
