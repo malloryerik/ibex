@@ -3,13 +3,16 @@ defmodule Ibex.Application do
   # for more information on OTP Applications
   @moduledoc false
 
+  @paper_port 7497
+  # @live_port 7496
+
   use Application
 
   @impl true
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: Ibex.Worker.start_link(arg)
-      # {Ibex.Worker, arg}
+      {Ibex.TwsClient, [host: "127.0.0.1", port: @paper_port]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
