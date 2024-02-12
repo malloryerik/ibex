@@ -24,7 +24,7 @@ Then grow the API.
 
 
 ## Installation
- Ibex will be on Hex.pm once we've finished the above goals.
+ Ibex will be on Hex.pm once we've finished "first step" goals above.
 
 <!-- ```elixir -->
 <!-- def deps do -->
