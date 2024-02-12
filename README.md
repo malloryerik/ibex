@@ -5,12 +5,15 @@ An Ibex is a mountain-climbing goat.
 Another kind of Ibex is Spain's `IBEX 35` stock index -- we have no affiliation or connection.
 
 
-##### Aims to be an Elixir wrapper for the Interactive Brokers TWS API with a focus on correct concurrency, stability, and ease of use.
+##### Aims to be an Elixir wrapper for the Interactive Brokers TWS API with a focus on concurrency, stability, and ease of use. 
+
 - Unofficial and inchoate. 
 - May contain bugs and other errors.
-- No warranty and no guarantee. Test in paper account exhaustively. Use at your own risk.
-- Authors accept no responsibility of any kind.
+- No warranty and no guarantee. Test in paper account exhaustively and review the code closely. Use at your own risk.
 - Nothing in this repo constitutes financial advice.
+- Authors accept no responsibility of any kind. 
+
+
 ---
 
 ## First step: a tiny subset of the api allowing Elixir apps to 
