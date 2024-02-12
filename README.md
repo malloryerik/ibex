@@ -1,18 +1,23 @@
 # Ibex
 ![Ibexes are superb climbers.](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/003_Wild_Alpine_Ibex_Sunset_Creux_du_Van_Mont_Racine_Photo_by_Giles_Laurent.jpg/440px-003_Wild_Alpine_Ibex_Sunset_Creux_du_Van_Mont_Racine_Photo_by_Giles_Laurent.jpg)
-An Ibex is an amazing mountain-climbing goat. 
-Another kind of Ibex is Spain's `IBEX 35` stock index -- no connection.
+
+An Ibex is a mountain-climbing goat. 
+Another kind of Ibex is Spain's `IBEX 35` stock index -- we have no affiliation or connection.
 
 
-##### Aims to be an Elixir wrapper for the Interactive Brokers TWS API with a focus on correct concurrency, stability, and ease of use. 
+##### Aims to be an Elixir wrapper for the Interactive Brokers TWS API with a focus on correct concurrency, stability, and ease of use.
 - Unofficial and inchoate. 
 - May contain bugs and other errors.
 - No warranty and no guarantee. Test in paper account exhaustively. Use at your own risk.
-- Author(s) accept no responsibility of any kind.
+- Authors accept no responsibility of any kind.
 - Nothing in this repo constitutes financial advice.
 ---
 
-## First step: a tiny subset of the api allowing Elixir apps to subscribe to live and historical futures market data. Maybe FX data also.
+## First step: a tiny subset of the api allowing Elixir apps to 
+1. subscribe to historical market data 
+2. subscribe to live data
+3. subscribe to an economic calendar. 
+   At first, data will mean futures and spot FX data, then stocks, bonds, etc. 
 
  TODO TCP Connection: Implement the TCP connection logic using :gen_tcp.
  TODO GenServer for Market Data: Create a GenServer that handles subscriptions to market data.
@@ -22,11 +27,9 @@ Another kind of Ibex is Spain's `IBEX 35` stock index -- no connection.
 
 
 
-<!-- ## Installation -->
-<!--  -->
-<!-- If [available in Hex](https://hex.pm/docs/publish), the package can be installed -->
-<!-- by adding `ibex` to your list of dependencies in `mix.exs`: -->
-<!--  -->
+ ## Installation
+ Ibex will be on Hex.pm once we've finished the above goals.
+
 <!-- ```elixir -->
 <!-- def deps do -->
   <!-- [ -->
@@ -35,8 +38,7 @@ Another kind of Ibex is Spain's `IBEX 35` stock index -- no connection.
 <!-- end -->
 <!-- ``` -->
 <!--  -->
-<!-- Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc) -->
-<!-- and published on [HexDocs](https://hexdocs.pm). Once published, the docs can -->
+<!-- Once published, the docs will -->
 <!-- be found at <https://hexdocs.pm/ibex>. -->
 
 
