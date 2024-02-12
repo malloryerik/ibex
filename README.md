@@ -1,7 +1,7 @@
 # Ibex
 ![Ibexes are superb climbers.](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/003_Wild_Alpine_Ibex_Sunset_Creux_du_Van_Mont_Racine_Photo_by_Giles_Laurent.jpg/440px-003_Wild_Alpine_Ibex_Sunset_Creux_du_Van_Mont_Racine_Photo_by_Giles_Laurent.jpg)
 
-An Ibex is a mountain-climbing goat. 
+An ibex is a mountain-climbing goat. 
 Another kind of Ibex is Spain's `IBEX 35` stock index -- we have no affiliation or connection.
 
 
