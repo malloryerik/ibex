@@ -21,6 +21,7 @@ defmodule Ibex.Tws.Client do
   # add `@live_port 7496` and way to **clearly and obviously** switch between paper and live.
   @paper_port 7497
 
+  @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   @doc """
   Starts the GenServer responsible for handling the connection to TWS API.
 

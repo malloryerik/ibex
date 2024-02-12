@@ -1,5 +1,6 @@
 defmodule Ibex.Fetchers.HistoricalDataFetcher do
   use GenServer
+  require Logger
 
   @moduledoc """
   Fetches historical data from the TWS API, managing requests to adhere to API constraints.
@@ -11,58 +12,63 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
   Starts the HistoricalDataFetcher process.
   """
   def start_link(args) do
-    GenServer.start_link(__MODULE__, args)
+    name_option =
+      case Map.fetch(args, :name) do
+        # No name provided, proceed without naming the process
+        :error -> []
+        # Name provided, use it to name the process
+        {:ok, name} -> [name: name]
+      end
+
+    GenServer.start_link(__MODULE__, args, name_option)
   end
 
   @doc """
   Initiates a request for historical data.
   """
-  def fetch_historical_data(pid, contract, opts) do
-    GenServer.cast(pid, {:fetch_historical_data, contract, opts})
+  def fetch_historical_data(pid, contract, details) do
+    GenServer.cast(pid, {:fetch_historical_data, contract, details})
   end
 
   # GenServer Callbacks
 
   @impl true
   def init(_args) do
-    # Initialize state if needed
     {:ok, %{}}
   end
 
   @impl true
-  def handle_cast({:fetch_historical_data, contract, opts}, state) do
-    # Assume `send_request/3` is a function that sends a request to the TWS API
-    # and handles the response, possibly asynchronously.
-    send_request(contract, opts)
+  def handle_cast({:fetch_historical_data, contract, details}, state) do
+    request_id = :erlang.unique_integer([:positive])
+    formatted_request = format_request(contract, details)
 
-    {:noreply, state}
+    Logger.info("Sending historical data request ##{request_id}")
+
+    case send_request(request_id, formatted_request) do
+      :ok ->
+        Logger.info("Request ##{request_id} sent successfully.")
+
+      {:error, reason} ->
+        Logger.error("Request ##{request_id} failed: #{reason}")
+    end
+
+    # Update state with the request status. This is a placeholder for actual state management.
+    new_state = Map.put(state, request_id, :sent)
+    {:noreply, new_state}
   end
 
   # Private Functions
 
-  defp send_request(contract, opts) do
-    # Here, you would implement the logic to format your request according to TWS API needs,
-    # respecting the pacing and limitations as documented by TWS.
-    # This is a placeholder for where you'd interact with Ibex.Tws.Client or similar.
+  defp send_request(request_id, formatted_request) do
+    # Placeholder for sending the request. Replace this with actual code to interact with Ibex.Tws.Client.
+    Logger.debug("Formatted request: #{inspect(formatted_request)}")
 
-    # Example placeholder logic:
-    request_id = :erlang.unique_integer([:positive])
-    formatted_request = format_request(contract, opts)
-
-    # Log the request for debugging purposes
-    Logger.info("Sending historical data request ##{request_id}")
-
-    # Assuming `Ibex.Tws.Client.request_historical_data/3` exists and is implemented correctly.
-    Ibex.Tws.Client.request_historical_data(request_id, formatted_request)
+    # Simulating a request send operation. Replace with actual API call.
+    :ok
   end
 
-  defp format_request(contract, opts) do
-    # Convert `contract` and `opts` into the format expected by the TWS API.
-    # This function should return the request in a way that `Ibex.Tws.Client` can directly use.
-    #
-    # This is highly dependent on your TWS Client implementation and the TWS API documentation.
-    #
-    # Return a placeholder for the sake of this example:
-    %{contract: contract, opts: opts}
+  defp format_request(contract, details) do
+    # Placeholder for request formatting logic. Adapt this based on your requirements and the TWS API documentation.
+    %{contract: contract, details: details}
   end
 end

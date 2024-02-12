@@ -43,7 +43,8 @@ defmodule Ibex.Application do
   def start(_type, _args) do
     children = [
       # Starts a worker by calling: Ibex.Worker.start_link(arg)
-      {Ibex.Tws.Client, [host: "127.0.0.1", port: @paper_port]}
+      {Ibex.Tws.Client, [host: "127.0.0.1", port: @paper_port]},
+      Ibex.Supervisors.FetchersSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

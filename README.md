@@ -17,8 +17,10 @@ Then grow the API.
 1. Connect to the TWS API via a TCP connection using a dedicated GenServer. DONE
 2. Subscribe to historical market data. IN PROGRESS
 3. Subscribe to live data. TODO
-4. Subscribe to an economic calendar. TODO
-   At first, data will mean futures and spot FX data, then stocks, bonds, futures and stock options, etc. 
+~~4. Subscribe to an economic calendar. TODO~~
+
+   At first, data will mean futures and spot FX data, then stocks, bonds, futures and stock options, etc.
+
 
 ### The subsequent step will focus on getting and sending orders and streaming trading account data.
 

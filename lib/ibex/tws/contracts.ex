@@ -4,12 +4,25 @@ defmodule Ibex.Tws.Contracts do
 
   ## Example:
 
-      contract_details = Ibex.Tws.Contracts.fx_contract("EUR", "USD")
+      contract = Ibex.Tws.Contracts.fx_contract("EUR", "USD")
+      opts = Ibex.Tws.RequestDetails.historical_data_details(durationStr: "2 W", whatToShow: "BID")
+
+      Ibex.IbexFetchers.start_historical_data_fetcher(contract, opts)
 
   """
 
   @doc """
-  Constructs contract details for FX pairs.
+  Constructs contract details for spot FX pairs.
+  `symbol` is the nominator.
+  `currency` is the denominator.
+
+  So for EUR/USD we'd have:
+
+      Tws.Contracts.fx_contract("EUR", "USD")
+
+  and for USD/JPY:
+
+      Tws.Contracts.fx_contract("USD", "JPY")
   """
   def fx_contract(symbol, currency) do
     %{
