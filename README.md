@@ -8,8 +8,8 @@ Another kind of Ibex is Spain's `IBEX 35` stock index -- we have no affiliation 
 ## Ibex aims to be an unofficial Elixir wrapper for the Interactive Brokers TWS API. 
 
 A focus on excellent concurrency, stability, and ease of use. 
-Current thinking is to value software quality over feature completeness, so start with a small subset of functionality that works to a high standard and is maintainable, documented, maintainable, polished. 
-Then grow the API. 
+Current thinking is to value software quality over feature completeness, so start with a small subset of functionality that works to a high standard and is maintainable, documented, polished. 
+Then grow the API.
 
 ---
 
