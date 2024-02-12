@@ -14,15 +14,12 @@ Another kind of Ibex is Spain's `IBEX 35` stock index -- we have no affiliation 
 ---
 
 ## First step: a tiny subset of the api allowing Elixir apps to 
-1. subscribe to historical market data 
-2. subscribe to live data
-3. subscribe to an economic calendar. 
+1. Connect to the TWS API via a TCP connection using a dedicated GenServer. DONE
+2. Subscribe to historical market data. IN PROGRESS
+3. Subscribe to live data. TODO
+4. Subscribe to an economic calendar. TODO
    At first, data will mean futures and spot FX data, then stocks, bonds, etc. 
 
- TODO TCP Connection: Implement the TCP connection logic using :gen_tcp.
- TODO GenServer for Market Data: Create a GenServer that handles subscriptions to market data.
- TODO Implement Callbacks: Start with a few critical callbacks from the EWrapper interface to handle market data.
- TODO Documentation.
 
 
 
