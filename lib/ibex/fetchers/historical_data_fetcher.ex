@@ -26,8 +26,8 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
   @doc """
   Initiates a request for historical data.
   """
-  def fetch_historical_data(pid, contract, details) do
-    GenServer.cast(pid, {:fetch_historical_data, contract, details})
+  def fetch_historical_data(pid, contract, opts) do
+    GenServer.cast(pid, {:fetch_historical_data, contract, opts})
   end
 
   # GenServer Callbacks
@@ -38,9 +38,9 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
   end
 
   @impl true
-  def handle_cast({:fetch_historical_data, contract, details}, state) do
+  def handle_cast({:fetch_historical_data, contract, opts}, state) do
     request_id = :erlang.unique_integer([:positive])
-    formatted_request = format_request(contract, details)
+    formatted_request = format_request(contract, opts)
 
     Logger.info("Sending historical data request ##{request_id}")
 
@@ -59,7 +59,7 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
 
   # Private Functions
 
-  defp send_request(request_id, formatted_request) do
+  defp send_request(_request_id, formatted_request) do
     # Placeholder for sending the request. Replace this with actual code to interact with Ibex.Tws.Client.
     Logger.debug("Formatted request: #{inspect(formatted_request)}")
 
@@ -67,8 +67,8 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
     :ok
   end
 
-  defp format_request(contract, details) do
+  defp format_request(contract, opts) do
     # Placeholder for request formatting logic. Adapt this based on your requirements and the TWS API documentation.
-    %{contract: contract, details: details}
+    %{contract: contract, opts: opts}
   end
 end

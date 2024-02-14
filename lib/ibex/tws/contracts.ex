@@ -1,18 +1,19 @@
 defmodule Ibex.Tws.Contracts do
   @moduledoc """
-  Constructs contract details for various financial instruments for the TWS API.
-
+  Constructs contract opts for various financial instruments for the TWS API.
+  Opts are a parameter for data request functions, following contract.
+  They concern things like timeframe, dates, data type (bid, ask, trade, etc.),
   ## Example:
 
       contract = Ibex.Tws.Contracts.fx_contract("EUR", "USD")
-      opts = Ibex.Tws.RequestDetails.historical_data_details(durationStr: "2 W", whatToShow: "BID")
+      opts = Ibex.Tws.RequestOpts.historical_data_opts(durationStr: "2 W", whatToShow: "BID")
 
       Ibex.IbexFetchers.start_historical_data_fetcher(contract, opts)
 
   """
 
   @doc """
-  Constructs contract details for spot FX pairs.
+  Constructs contract opts for spot FX pairs.
   `symbol` is the nominator.
   `currency` is the denominator.
 
@@ -42,7 +43,7 @@ defmodule Ibex.Tws.Contracts do
           symbol: any()
         }
   @doc """
-  Constructs contract details for a futures contract.
+  Constructs contract opts for a futures contract.
 
   ## Example:
 
@@ -58,7 +59,7 @@ defmodule Ibex.Tws.Contracts do
   - multiplier: The contract point multiplier, specifying the size of the contract.
 
   ## Returns
-  - A map representing the contract details required by TWS.
+  - A map representing the contract opts required by TWS.
   """
   def futures_contract(
         symbol,
@@ -90,7 +91,7 @@ defmodule Ibex.Tws.Contracts do
   - exchange: The exchange where the continuous futures is traded.
 
   ## Returns
-  - A map representing the contract details required by TWS for a continuous futures contract.
+  - A map representing the contract opts required by TWS for a continuous futures contract.
 
   ## Example:
 
@@ -149,7 +150,7 @@ defmodule Ibex.Tws.Contracts do
   end
 
   @doc """
-  Constructs contract details for Stocks, including support for specifying primary exchange.
+  Constructs contract opts for Stocks, including support for specifying primary exchange.
   """
   def stock_contract(symbol, currency, exchange, primary_exchange \\ nil) do
     %{
@@ -162,7 +163,7 @@ defmodule Ibex.Tws.Contracts do
   end
 
   @doc """
-  Constructs contract details for Cryptocurrency.
+  Constructs contract opts for Cryptocurrency.
   """
   def crypto_contract(symbol, currency) do
     %{

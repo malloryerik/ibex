@@ -1,14 +1,14 @@
-defmodule Ibex.Tws.RequestDetails do
+defmodule Ibex.Tws.RequestOpts do
   @moduledoc """
-  Constructs details maps for various TWS API requests, ensuring they adhere to expected formats and values.
+  Constructs opts maps for various TWS API requests, ensuring they adhere to expected formats and values.
   """
 
   @doc """
-  Creates a details map for historical data requests with default values and allows overriding.
+  Creates a opts map for historical data requests with default values and allows overriding.
 
   Example:
 
-        opts = Ibex.Tws.RequestDetails.historical_data_details(durationStr: "2 W", whatToShow: "HISTORICAL_VOLATILITY")
+        opts = Ibex.Tws.RequestOpts.historical_data_opts(durationStr: "2 W", whatToShow: "HISTORICAL_VOLATILITY")
         contract = Ibex.Tws.Contracts.fx_contract("EUR", "USD")
 
         Ibex.IbexFetchers.start_historical_data_fetcher(contract, opts)
@@ -56,7 +56,7 @@ defmodule Ibex.Tws.RequestDetails do
 
 
   """
-  def historical_data_details(overrides \\ %{}) do
+  def historical_data_opts(overrides \\ %{}) do
     defaults = %{
       # Use current time if empty
       endDateTime: "",

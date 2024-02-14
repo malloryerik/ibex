@@ -9,12 +9,12 @@ defmodule Ibex.IbexFetchers do
   @doc """
   Starts a HistoricalDataFetcher process with the given contract and options.
   """
-  def start_historical_data_fetcher(contract, details) do
+  def start_historical_data_fetcher(contract, opts) do
     # This structure is expected in HistoricalDataFetcher
-    args = %{contract: contract, details: details}
+    args = %{contract: contract, opts: opts}
 
     # If you're considering passing a name, make sure it's part of the args map
-    # args = %{contract: contract, details: details, name: :some_unique_name}
+    # args = %{contract: contract, opts: opts, name: :some_unique_name}
 
     case DynamicSupervisor.start_child(FetchersSupervisor, {HistoricalDataFetcher, args}) do
       {:ok, pid} -> {:ok, pid}

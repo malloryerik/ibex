@@ -10,6 +10,12 @@ defmodule Ibex.Tws.Client do
 
       {:ok, pid} = Ibex.Tws.Client.start_link(host: "127.0.0.1", port: 7497)
       # Now the client is ready to send and receive messages with the TWS API.
+
+
+  In your fetcher process or wherever you decide to initiate the request, you would call:
+
+      Ibex.Tws.Client.send_request(client_pid, request_data)
+
   """
 
   use GenServer
@@ -23,10 +29,10 @@ defmodule Ibex.Tws.Client do
 
   @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
   @doc """
-  Starts the GenServer responsible for handling the connection to TWS API.
+  Starts the GenServer that handles the connection to TWS API.
 
   ## Parameters
-  - `opts`: Options for starting the GenServer. Can include the host and port.
+  - `opts`: Opts for starting the GenServer. Can include the host and port.
 
   ## Returns
   - PID of the started GenServer on success
@@ -37,12 +43,14 @@ defmodule Ibex.Tws.Client do
 
   # GenServer Callbacks
 
+  @impl true
   def init(_opts) do
     # Asynchronously trigger connection setup
     send(self(), :connect)
     {:ok, %{socket: nil}}
   end
 
+  @impl true
   def handle_info(:connect, state) do
     Logger.info("Connecting to TWS API at #{:inet.ntoa(@ip)}:#{@paper_port}")
 
@@ -73,5 +81,22 @@ defmodule Ibex.Tws.Client do
     {:stop, :normal, state}
   end
 
-  # Additional functionality for sending messages to TWS could be added here
+  @impl true
+  def handle_cast({:send_request, request_data}, %{socket: socket} = state)
+      when not is_nil(socket) do
+    request_message = format_request(request_data)
+    :ok = :gen_tcp.send(socket, request_message)
+    {:noreply, state}
+  end
+
+  defp format_request(_request_data) do
+    # This function should turn your request data into a string or binary
+    # that matches the TWS API's expected format for a historical data request.
+    # This is highly dependent on the TWS API documentation.
+  end
+
+  # Public API to send a request
+  def send_request(pid, request_data) do
+    GenServer.cast(pid, {:send_request, request_data})
+  end
 end
