@@ -40,6 +40,17 @@ Then grow the API.
 <!-- be found at <https://hexdocs.pm/ibex>. -->
 
 
+
+----
+
+REFERENCES:
+
+Python -- https://github.com/erdewit/ib_insync/ -- Excellent library, though in Python async / concurrency is a travesty.
+
+TS -- https://github.com/stoqey/ib
+https://github.com/stoqey/ib/blob/333b7ba3f6851f9fbed02ba06fd55d1315045786/src/core/io/socket.ts#L91
+
+Julia -- https://github.com/lbilli/Jib.jl
 ----
 
 DISCLAIMERS:

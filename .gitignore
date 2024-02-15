@@ -24,3 +24,7 @@ ibex-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# IBKR Mac API download
+/priv/IBJts/
+/priv/examples/
