@@ -3,8 +3,9 @@ defmodule Ibex.Tws.Client do
   Handles the TCP connection to the Interactive Brokers Trader Workstation (TWS) API.
 
   This module encapsulates the functionality to connect to the TWS API, manage the TCP connection,
-  and process incoming and outgoing messages. It supports connecting to both paper trading and live
-  environments by switching the port number.
+  and process incoming and outgoing messages. Thus abstracts away from other higher-level modules
+  who can use this.
+  Supports connecting to both paper trading and live environments by switching the port number.
 
   ## Example
 
@@ -12,7 +13,7 @@ defmodule Ibex.Tws.Client do
       # Now the client is ready to send and receive messages with the TWS API.
 
 
-  In your fetcher process or wherever you decide to initiate the request, you would call:
+      # Inside your fetcher process or wherever you decide to initiate the request, you would call:
 
       Ibex.Tws.Client.send_request(client_pid, request_data)
 
@@ -89,20 +90,6 @@ defmodule Ibex.Tws.Client do
   if any, will be handled by other callbacks in this GenServer module
   such as `handle_info/2`.
 
-  1. Request Data comes from applying the Tws.Contracts and Tws.Request_Opts to
-    a fetcher module like `Fetchers.HistoricalDataFetcher`.
-
-  ## Example:
-      # Construct the contract for ESH4
-      contract = Ibex.Tws.Contracts.future_contract("ES", "202403")
-
-      # Construct the request options for hourly bars over one week
-      opts = Ibex.Tws.RequestOpts.historical_data_opts("1 W", "1 hour")
-
-      # Assuming fetcher_pid is the PID of your fetching process
-      iex> fetcher_pid |> Fetchers.HistoricalDataFetcher.fetch_historical_data(contract, opts)
-
-
 
   ### Parameters:
   - `{:send_request, request_data}`: A tuple where `:send_request` is the action to be performed and `request_data` is the data to be sent to the TWS API.
@@ -115,20 +102,18 @@ defmodule Ibex.Tws.Client do
       when not is_nil(socket) do
     request_message = Ibex.Tws.Protocol.encode(request_data)
 
-    case request_message do
-      nil ->
-        Logger.error("Request message is nil.")
-        {:noreply, state}
+    if request_message == nil do
+      Logger.error("Encoded request message is nil.")
+      {:noreply, state}
+    else
+      case :gen_tcp.send(socket, request_message) do
+        :ok ->
+          {:noreply, state}
 
-      _ ->
-        case :gen_tcp.send(socket, request_message) do
-          :ok ->
-            {:noreply, state}
-
-          {:error, reason} ->
-            Logger.error("Failed to send request: #{inspect(reason)}")
-            {:stop, :send_error, state}
-        end
+        {:error, reason} ->
+          Logger.error("Failed to send request: #{inspect(reason)}")
+          {:stop, :send_error, state}
+      end
     end
   end
 
