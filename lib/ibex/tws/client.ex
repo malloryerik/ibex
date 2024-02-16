@@ -81,18 +81,55 @@ defmodule Ibex.Tws.Client do
     {:stop, :normal, state}
   end
 
-  @impl true
+  @doc """
+  ### Handles sending a request to the TWS API.
+  Designed to be non-blocking and asynchronous. Uses `GenServer.cast/2`
+  (one-way messaging) to handle the request allowing the caller to
+  continue without waiting for a response. The response to the request,
+  if any, will be handled by other callbacks in this GenServer module
+  such as `handle_info/2`.
+
+  1. Request Data comes from applying the Tws.Contracts and Tws.Request_Opts to
+    a fetcher module like `Fetchers.HistoricalDataFetcher`.
+
+  ## Example:
+      # Construct the contract for ESH4
+      contract = Ibex.Tws.Contracts.future_contract("ES", "202403")
+
+      # Construct the request options for hourly bars over one week
+      opts = Ibex.Tws.RequestOpts.historical_data_opts("1 W", "1 hour")
+
+      # Assuming fetcher_pid is the PID of your fetching process
+      iex> fetcher_pid |> Fetchers.HistoricalDataFetcher.fetch_historical_data(contract, opts)
+
+
+
+  ### Parameters:
+  - `{:send_request, request_data}`: A tuple where `:send_request` is the action to be performed and `request_data` is the data to be sent to the TWS API.
+  - `%{socket: socket} = state`: The current state of the GenServer, including the socket connection to the TWS API.
+
+  ### Returns:
+  - `{:noreply, state}`: Indicates that no immediate reply is expected, and the state is potentially updated.
+  """
   def handle_cast({:send_request, request_data}, %{socket: socket} = state)
       when not is_nil(socket) do
-    request_message = format_request(request_data)
-    :ok = :gen_tcp.send(socket, request_message)
-    {:noreply, state}
-  end
+    request_message = Ibex.Tws.Protocol.encode(request_data)
 
-  defp format_request(_request_data) do
-    # This function should turn your request data into a string or binary
-    # that matches the TWS API's expected format for a historical data request.
-    # This is highly dependent on the TWS API documentation.
+    case request_message do
+      nil ->
+        Logger.error("Request message is nil.")
+        {:noreply, state}
+
+      _ ->
+        case :gen_tcp.send(socket, request_message) do
+          :ok ->
+            {:noreply, state}
+
+          {:error, reason} ->
+            Logger.error("Failed to send request: #{inspect(reason)}")
+            {:stop, :send_error, state}
+        end
+    end
   end
 
   # Public API to send a request

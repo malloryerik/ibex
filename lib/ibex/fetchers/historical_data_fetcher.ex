@@ -4,6 +4,14 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
 
   @moduledoc """
   Fetches historical data from the TWS API, managing requests to adhere to API constraints.
+
+  ## Example
+      {:ok, pid} = Ibex.Fetchers.HistoricalDataFetcher.start_link(%{})
+      contract = Tws.Contracts.futures_contract("ES", "USD", "GLOBEX", "202406", "50")
+      opts = Tws.RequestOpts.historical_data_opts(%{durationStr: "1 W", barSizeSetting: "1 hour"})
+
+      Ibex.Fetchers.HistoricalDataFetcher.fetch_historical_data(pid, contract, opts)
+
   """
 
   # Public API
