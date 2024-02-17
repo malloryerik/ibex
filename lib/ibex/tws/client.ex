@@ -66,7 +66,7 @@ defmodule Ibex.Tws.Client do
         {:ok, pid} = Ibex.Tws.Client.start_link(host: "127.0.0.1", port: 7497)
   """
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: :ibex_tws_client)
   end
 
   @doc """

@@ -1,8 +1,10 @@
 defmodule Ibex.Fetchers.HistoricalDataFetcher do
   use GenServer
   require Logger
+  require IO
 
   alias Ibex.Tws.Contracts
+  alias Ibex.Tws.Client
 
   @moduledoc """
   Fetches historical data from the TWS API, managing requests to adhere to API constraints.
@@ -50,17 +52,13 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
   @impl true
   def handle_cast({:fetch_historical_data, contract, opts}, state) do
     request_id = :erlang.unique_integer([:positive])
+
     formatted_request = format_request(contract, opts)
 
-    Logger.info("Sending historical data request ##{request_id}")
+    IO.puts("Sending historical data request #{request_id}")
+    __MODULE__.send_request(request_id, formatted_request)
 
-    case send_request(request_id, formatted_request) do
-      :ok ->
-        Logger.info("Request ##{request_id} sent successfully.")
-
-      {:error, reason} ->
-        Logger.error("Request ##{request_id} failed: #{reason}")
-    end
+    IO.puts("Request #{request_id} sent successfully.")
 
     # Update state with the request status. This is a placeholder for actual state management.
     new_state = Map.put(state, request_id, :sent)
@@ -69,16 +67,29 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
 
   # Private Functions
 
-  defp send_request(_request_id, formatted_request) do
-    # Placeholder for sending the request. Replace this with actual code to interact with Ibex.Tws.Client.
-    Logger.debug("Formatted request: #{inspect(formatted_request)}")
-
-    # Simulating a request send operation. Replace with actual API call.
+  def send_request(request_id, formatted_request) do
+    :ok = Ibex.Tws.Client.send_request(:ibex_tws_request, formatted_request)
+    Logger.info("Request #{request_id} sent successfully.")
     :ok
   end
 
   defp format_request(contract, opts) do
-    # Placeholder for request formatting logic. Adapt this based on your requirements and the TWS API documentation.
-    %{contract: contract, opts: opts}
+    request_parts = [
+      # Request type
+      "HISTORICAL_DATA",
+      contract.symbol,
+      contract.secType,
+      contract.currency,
+      contract.exchange,
+      opts.durationStr,
+      opts.barSizeSetting,
+      opts.whatToShow,
+      # Use regular trading hours
+      "1",
+      # Format date in readable format
+      "1"
+    ]
+
+    Ibex.Tws.Protocol.encode(request_parts)
   end
 end

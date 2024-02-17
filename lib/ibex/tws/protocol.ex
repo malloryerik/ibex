@@ -13,6 +13,7 @@ defmodule Ibex.Tws.Protocol do
   @padding_size 4
   @message_type_query 100
   @message_type_response 200
+  @delimiter ";"
 
   def encode(parts), do: Enum.map(parts, &encode_part/1) |> Enum.join(@sep)
 
@@ -24,7 +25,28 @@ defmodule Ibex.Tws.Protocol do
   # Extend with more specific cases as needed
 
   def decode(message) do
-    # Implement decoding logic based on the TWS API's specifications
+    message
+    |> String.split(@delimiter)
+    |> Enum.map(&convert_part/1)
+    |> structure_data
+  end
+
+  defp convert_part(part) do
+    cond do
+      String.contains?(part, ".") -> String.to_float(part)
+      String.match?(part, ~r/^\d+$/) -> String.to_integer(part)
+      part == "true" -> true
+      part == "false" -> false
+      true -> part
+    end
+  end
+
+  defp structure_data(parts) do
+    # Example of structuring data, adjust based on your needs
+    %{
+      type: Enum.at(parts, 0),
+      data: Enum.slice(parts, 1..-1)
+    }
   end
 end
 
