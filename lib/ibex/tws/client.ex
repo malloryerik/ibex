@@ -69,12 +69,26 @@ defmodule Ibex.Tws.Client do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  @doc """
+  Disconnects from the TWS API.
+
+  ## Parameters:
+  - `pid`: The PID of the GenServer managing the connection.
+
+  ## Example
+      Ibex.Tws.Client.disconnect(pid)
+  """
+  def disconnect(pid) do
+    GenServer.cast(pid, :disconnect)
+  end
+
   # GenServer Callbacks
 
   @impl true
   def init(_opts) do
     # Asynchronously trigger connection setup
-    send(self(), :connect)
+    # uncomment for automatic (paper) connections.
+    # send(self(), :connect)
     {:ok, %{socket: nil}}
   end
 
@@ -142,6 +156,13 @@ defmodule Ibex.Tws.Client do
           {:stop, :send_error, state}
       end
     end
+  end
+
+  @impl true
+  def handle_cast(:disconnect, %{socket: socket} = state) do
+    :ok = :gen_tcp.close(socket)
+    Logger.info("Disconnected from TWS API gracefully.")
+    {:stop, :normal, state}
   end
 
   # Public API to send a request

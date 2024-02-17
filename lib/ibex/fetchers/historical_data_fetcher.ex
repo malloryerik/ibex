@@ -2,6 +2,8 @@ defmodule Ibex.Fetchers.HistoricalDataFetcher do
   use GenServer
   require Logger
 
+  alias Ibex.Tws.Contracts
+
   @moduledoc """
   Fetches historical data from the TWS API, managing requests to adhere to API constraints.
 

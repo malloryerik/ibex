@@ -42,13 +42,15 @@ defmodule Ibex.Application do
   """
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Ibex.Worker.start_link(arg)
-      {Ibex.Tws.Client, [host: "127.0.0.1", port: @paper_port]},
+      # Define the child with a map for more detailed options
+      %{
+        id: Ibex.Tws.Client,
+        start: {Ibex.Tws.Client, :start_link, [[host: "127.0.0.1", port: @paper_port]]},
+        restart: :transient
+      },
       Ibex.Supervisors.FetchersSupervisor
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Ibex.Supervisor]
     Supervisor.start_link(children, opts)
   end
