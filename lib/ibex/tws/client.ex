@@ -2,19 +2,20 @@ defmodule Ibex.Tws.Client do
   @moduledoc """
   Handles the TCP connection to the Interactive Brokers Trader Workstation (TWS) API.
 
-  This module encapsulates the functionality to connect to the TWS API, manage the TCP connection,
+  The Client module encapsulates the functionality to connect to the TWS API, manage the TCP connection,
   and process incoming and outgoing messages. Thus abstracts away from other higher-level modules
-  who can use this.
+  that can use this.
+
   Supports connecting to both paper trading and live environments by switching the port number.
 
-  ## Example
+  Easiest: Connect to TWS paper trading (which must be open and running).
 
-      {:ok, pid} = Ibex.Tws.Client.start_link(host: "127.0.0.1", port: 7497)
-      # Now the client is ready to send and receive messages with the TWS API.
+      {:ok, pid} = Ibex.Tws.Client.connect_paper()
+      # or
+      {:ok, pid} = Ibex.Tws.Client.connect_live()
 
-
-      # Inside your fetcher process or wherever you decide to initiate the request, you would call:
-
+  Now the client is ready to send and receive messages with the TWS API.
+  Inside your fetcher process or wherever you decide to initiate the request, you would call:
       Ibex.Tws.Client.send_request(client_pid, request_data)
 
   """
@@ -25,10 +26,33 @@ defmodule Ibex.Tws.Client do
   # IP address in tuple format for localhost
   @ip {127, 0, 0, 1}
   # Default port for TWS API paper trading; live is 7496
-  # add `@live_port 7496` and way to **clearly and obviously** switch between paper and live.
+  # add way to **clearly and obviously** switch between paper and live.
+  @live_port 7496
   @paper_port 7497
 
-  @spec start_link(any()) :: :ignore | {:error, any()} | {:ok, pid()}
+  @doc """
+  The easiest way to establish a connection with TWS paper_trading (which must be open and running).
+
+      {:ok, pid} = Ibex.Tws.Client.connect_paper()
+
+  """
+
+  def connect_paper() do
+    start_link(host: @ip, port: @paper_port)
+  end
+
+  @doc """
+  ### *_Connects to Live Trading with real money._*
+
+  The easiest way to establish a connection with TWS in your live account (which must be open and running).
+
+      {:ok, pid} = Ibex.Tws.Client.connect_live()
+
+  """
+  def connect_live() do
+    start_link(host: @ip, port: @live_port)
+  end
+
   @doc """
   Starts the GenServer that handles the connection to TWS API.
 
@@ -37,6 +61,9 @@ defmodule Ibex.Tws.Client do
 
   ## Returns
   - PID of the started GenServer on success
+
+  ## Example
+        {:ok, pid} = Ibex.Tws.Client.start_link(host: "127.0.0.1", port: 7497)
   """
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
